@@ -5,3 +5,10 @@
     margin: 0;
     box-sizing: border-box;
 }
+
+:is(h1, h2, h3, h4, h5, h6) {
+    text-align: center;
+    color: rgb(170, 135, 196);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin-top: 30px;
+}
