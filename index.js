@@ -2,6 +2,9 @@
 import express from 'express'
 import path from 'path'
 import { connection as db } from './config/index.js'
+import { createToken } from './middleware/AuthenticateUser.js'
+import { hash } from 'bcrypt'
+import bodyParser from 'body-parser'
 
 // Create an express app
 const app = express()
@@ -15,6 +18,8 @@ app.use(router,
     express.urlencoded({ 
         extended: true 
     }))
+
+router.use(bodyParser.json()) 
 
 // Endpoint
 router.get('^/$|/eShop', (req, res) => {
@@ -70,6 +75,69 @@ router.get('*', (req, res) => {
         msg: 'Route not found'
     })
 })
+
+// register a new user
+
+router.post('/register', bodyParser.json(), async (req, res) =>{
+    try {
+        let data = req.body
+            data.pwd = await hash(data.pwd, 12)
+        // Payload
+        let user = {
+            emailAdd: data.emailAdd,
+            pwd: data.pwd
+        }
+        let strQry = `
+        INSERT INTO Users 
+        SET ?;
+        `
+        // SET ?; is going to update the data of each array
+        db.query(strQry, [data], (err) => {
+            if (err ) {
+                res.json({
+                    status: res.statusCode,
+                    msg: 'This email has already been taken'
+                })
+            } else {
+                const token = createToken(user)
+            }
+    })
+
+// update a user
+
+
+
+    }catch(e) {
+
+    }
+})
+
+router.patch('/user/:id', async(req, res) => {
+    try {
+        let data = req.body
+        if (data.pwd) {
+            data.pwd = await hash(data.pwd, 12)
+        }
+        const strQry = `
+        UPDATE Users 
+        SET ? 
+        WHERE userID = ${req.params.id}
+        `
+        db.query(strQry, [data], (err) => {
+            if (err) throw new Error('Unable to update a user')
+                res.json({
+            status: res.statusCode,
+            msg: 'This user record was updated'
+        })
+        })
+    } catch (e) {
+        res.json ({
+            status: 400,
+            msg: e.message
+        })
+    }
+})
+
 app.listen(port, () =>{
     console.log(`Server is running on ${port}`);
 })
