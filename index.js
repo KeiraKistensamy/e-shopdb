@@ -3,7 +3,7 @@ import express from 'express'
 import path from 'path'
 import { connection as db } from './config/index.js'
 import { createToken } from './middleware/AuthenticateUser.js'
-import { hash } from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import bodyParser from 'body-parser'
 import { stat } from 'fs'
 
@@ -31,7 +31,7 @@ router.get('^/$|/eShop', (req, res) => {
 router.get('/users', (req, res) => {
     try{
         const strQry = `
-        SELECT firstName, lastName, age, emailAdd, pwd
+        SELECT firstName, lastName, age, emailAdd
         FROM Users;
         `
         db.query(strQry, (err, results) => {
@@ -53,7 +53,7 @@ router.get('/users', (req, res) => {
 router.get('/users/:id', (req, res) => {
     try{
         const strQry = `
-        SELECT userId, firstName, lastName, age, emailAdd
+        SELECT userId, firstName, lastName, age, emailAdd, pwd, userRole, profileUrl
         FROM Users
         WHERE userID = ${req.params.id}
         `
