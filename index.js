@@ -21,9 +21,9 @@ app.use(router,
         extended: true 
     }))
 
-router.use(bodyParser.json()) 
+router.use(bodyParser.json())
 
-// Endpoint
+// Endpoints
 router.get('^/$|/eShop', (req, res) => {
     res.status(200).sendFile(path.resolve('./static/html/index.html'))
 })
@@ -31,7 +31,7 @@ router.get('^/$|/eShop', (req, res) => {
 router.get('/users', (req, res) => {
     try{
         const strQry = `
-        SELECT firstName, lastName, age, emailAdd
+        SELECT firstName, lastName, age, emailAdd, pwd
         FROM Users;
         `
         db.query(strQry, (err, results) => {
@@ -49,6 +49,7 @@ router.get('/users', (req, res) => {
         })
     }
 })
+
 router.get('/users/:id', (req, res) => {
     try{
         const strQry = `
@@ -79,7 +80,6 @@ router.get('*', (req, res) => {
 })
 
 // register a new user
-
 router.post('/register', bodyParser.json(), async (req, res) =>{
     try {
         let data = req.body
@@ -104,17 +104,13 @@ router.post('/register', bodyParser.json(), async (req, res) =>{
                 const token = createToken(user)
             }
     })
-
-// update a user
-
-
-
     }catch(e) {
 
 
     }
 })
 
+// update a user
 router.post('/login', (req, res) => {
     try {
         const { emailAdd, pwd } = req.body
@@ -183,7 +179,6 @@ router.patch('/user/:id', async(req, res) => {
 })
 
 // Delete a user
-
 router.delete('/user/:id', (req, res) => {
     try{
         const strQry = `
