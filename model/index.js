@@ -1,5 +1,5 @@
-import { Users } from "./Users"
-import { Products } from "./Products"
+import { Users } from "./Users.js"
+import { Products } from "./Products.js"
 import { connection as db } from "../config/index.js"
 
 const users =  new Users() 
@@ -9,4 +9,3 @@ export {
     users,
     products
 }
-

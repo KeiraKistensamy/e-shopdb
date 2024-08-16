@@ -6,14 +6,14 @@ class Users {
     fetchUsers(req, res) {
         try {
             const strQry = `
-            SELECT userID, firstName, lastName, age, emailAdd, pwd, userRole, profileURL
+            SELECT *
             FROM Users
             `
             db.query(strQry, (err, results) => {
                 if(err) throw new Error('Unable to fetch user')
                     res.json({
                         status: res.statusCode,
-                        results: results[0]
+                        results: results
                     })
             })
         } catch(e) {
