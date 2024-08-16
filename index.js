@@ -72,12 +72,7 @@ router.get('/users/:id', (req, res) => {
     }
 })
 
-router.get('*', (req, res) => {
-    res.json({
-        status: 404,
-        msg: 'Route not found'
-    })
-})
+
 
 // register a new user
 router.post('/register', bodyParser.json(), async (req, res) =>{
@@ -199,6 +194,167 @@ router.delete('/user/:id', (req, res) => {
         })
     }
 }) 
+
+// ********************************************************************
+// Products
+// ********************************************************************
+
+// Fetching all products
+
+router.get('/products', (req, res) => {
+    try{
+        const strQry = `
+            SELECT productID, prodName, category, prodDescription, prodURL, amount
+            FROM Products;
+        `
+        db.query(strQry, (err, results) => {
+            if (err) throw new Error(err)
+                res.json({
+                    status: res.statusCode,
+                    results
+                })
+        })
+    } catch(e) {
+        res.json({
+            status: 404,
+            msg: e.message
+        })
+    }
+})
+
+// Fetching a single product
+
+router.get('/products', (req, res) => {
+    try{
+        const strQry = `
+            SELECT productID, prodName, category, prodDescription, prodURL, amount
+            FROM Products
+            WHERE productID = ${req.params.id}
+        `
+        db.query(strQry, (err, results) => {
+            if (err) throw new Error(err)
+                res.json({
+                    status: res.statusCode,
+                    results
+                })
+        })
+    } catch(e) {
+        res.json({
+            status: 404,
+            msg: e.message
+        })
+    }
+})
+
+// Adding a product
+
+router.post('/addProduct', async (req, res) =>{ 
+    try {
+        let prodData = req.body
+            prodData.prodURL = await hash(prodData.prodURL, 12)
+        let product = {
+            productID: prodData.productID,
+            prodName: prodData.prodName,
+            category: prodData.category,
+            prodDescription: prodData.prodDescription,
+            prodURL: prodData.prodURL,
+            amount: prodData.amount
+        }
+        let strQry = `
+        INSERT INTO Products
+        SET ?;
+        `
+        db.query(strQry, [prodData], (err) => {
+            if (err) {
+                res.json({
+                    status: res.statusCode,
+                    msg: 'This product has already been added'
+                })
+            } else {
+                const token = createToken(product)
+                res.json({
+                    token,
+                    msg: 'Product added successfully.'
+                })
+            }
+        })
+    }catch(e) {
+
+    }
+})
+
+// Updating a product
+
+// router.post('/login', (req, res) => {
+//     try {
+//         const { emailAdd, pwd } = req.body
+//         const strQry = `
+//         SELECT userID, firstName, lastName, age, emailAdd, pwd
+//         FROM Users
+//         WHERE emailAdd = '${emailAdd}';
+//         `
+//         db.query(strQry, async(err, result) => {
+//             if(err) throw new Error('To login, please review your query')
+//             if(!result?.length) {
+//                 res.json(
+//                     {
+//                         status: 401,
+//                         msg: 'You provided a wrong email.'
+//                     }
+//                 )
+//             } else {
+//                 const isValidPass = await compare
+//                 (pwd, result[0].pwd)
+//                 if (isValidPass) {
+//                     const token = createToken({
+//                         emailAdd,
+//                         pwd
+//                     })
+//                     res.json({
+//                         status:res.statusCode,
+//                         token,
+//                         result: result[0]
+//                     })
+//                 }
+//             }
+//         })
+//     } catch (e) {
+//         res.json({
+//             status: 401,
+//             msg: 'You provided a '
+//         })
+//     }
+// })
+
+// Deleting a product
+
+router.delete('/product/:id', (req, res) => {
+    try{
+        const strQry = `
+        DELETE FROM Products
+        WHERE prodID = ${req.params.id}
+        `
+        db.query(strQry, (err) => {
+            if (err) throw new Error('To delete a product, please review your delete query.')
+                res.json({
+                    status: res.statusCode,
+                    msg: 'A products\'s information was removed'
+                })
+        })
+    } catch (e) {
+        res.json({
+            status: 404 ,
+            msg: e.message
+        })
+    }
+}) 
+
+router.get('*', (req, res) => {
+    res.json({
+        status: 404,
+        msg: 'Route not found'
+    })
+})
 
 app.listen(port, () =>{
     console.log(`Server is running on ${port}`);
