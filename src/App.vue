@@ -1,10 +1,28 @@
 <template>
-  <nav>
 
-  </nav>
-  <router-view/>
+<div class="wrapper">
+    <NavBar/>
+  <main>
+    <router-view/>
+  </main>
+    <Footer/>
+</div>
+
 </template>
 
-<style src="@/assets/CSS/style.css">
+<script>
+import NavBar from './components/NavBar.vue'
+import Footer from '@/components/Footer.vue'
+
+export default {
+  components: {
+    NavBar,
+    Footer 
+  },
+}
+
+</script>
+
+<style>
 
 </style>
