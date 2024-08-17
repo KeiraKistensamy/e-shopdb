@@ -79,7 +79,7 @@ addProduct(req, res) {
          } catch(e) {
         res.json({
             status: 404,
-            msg: e.message
+            err: e.message
         })
     }
 }
@@ -101,7 +101,7 @@ updateProduct(req, res) {
     } catch (e) {
         res.json({
             status: 400,
-            msg: e.message
+            err: e.message
         })
     }
 }
@@ -122,7 +122,7 @@ deleteProduct(req, res) {
     } catch (e) {
         res.json({
             status: 404,
-            msg: e.message
+            err: e.message
         })
     }
 }
