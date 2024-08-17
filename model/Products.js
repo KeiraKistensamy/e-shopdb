@@ -11,7 +11,7 @@ fetchProdutcs(req, res) {
                 if(err) throw new Error('Unable to fetch product')
                     res.json({
                         status: res.statusCode,
-                        results: results[0]
+                        results: results
                     })
             })
         } catch(e) {
